@@ -25,6 +25,8 @@ public class Analysis {
 		int uniqueCount = getTotalUniqueWords(novel);
 		System.out.println(uniqueCount);
 		
+		List frequentList= get20MostFrequentWords(novel);
+		System.out.println(frequentList);
 	}
 	
 	private int getTotalNumerOfWords(String novel) {
@@ -35,6 +37,7 @@ public class Analysis {
 		Scanner scan = new Scanner(novel);
 		while (scan.hasNext()) {
 			String word = scan.next();
+			word = word.toLowerCase();
 			if (wordsMap.containsKey(word)) {
 				int val = wordsMap.get(word);
 				val+=1;
@@ -48,7 +51,31 @@ public class Analysis {
 	}
     
 	private ArrayList<List> get20MostFrequentWords(String novel){
-		return null;
+		ArrayList<List> res = new ArrayList<List>();
+		PriorityQueue <String> sortedHeap = new PriorityQueue<>(wordsMap.size(), new Comparator<String>() {
+				public int compare (String s1, String s2) {
+					int countDiff = wordsMap.get(s2)-wordsMap.get(s1);
+					if (countDiff ==0) {
+						return s1.compareTo(s2);
+					}
+					return countDiff;	
+					}
+		});
+		
+		for (String key: wordsMap.keySet()) {
+			sortedHeap.offer(key);
+		}
+		
+		for (int i=0; i<20; i++) {
+			String word = sortedHeap.poll();
+			Integer val = wordsMap.get(word);
+			List<String> pair = new ArrayList<>();
+			pair.add(word);
+			pair.add(val.toString());
+			res.add(pair);
+		}
+		
+		return res;
 	}
 	
 }
