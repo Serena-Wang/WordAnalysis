@@ -45,6 +45,10 @@ public class Analysis {
 		
 		List filteredtList= get20MostInterestingFrequentWords(commonWords);
 		System.out.println(filteredtList);
+		
+		List leastList = get20LeastFrequentWords();
+		System.out.println(leastList);
+		
 	}
 	
 	private int getTotalNumerOfWords(String novel) {
@@ -68,10 +72,16 @@ public class Analysis {
 		
 		return wordsMap.size();
 	}
-	private PriorityQueue sortWords() {
+	private PriorityQueue sortWords(String option) {
 		PriorityQueue <String> sortedHeap = new PriorityQueue<>(wordsMap.size(), new Comparator<String>() {
 			public int compare (String s1, String s2) {
-				int countDiff = wordsMap.get(s2)-wordsMap.get(s1);
+				int countDiff=0;
+				if (option.equals("min")) {
+					countDiff = wordsMap.get(s1)-wordsMap.get(s2);
+				} else {
+					countDiff = wordsMap.get(s2)-wordsMap.get(s1);
+				}
+				 
 				if (countDiff ==0) {
 					return s1.compareTo(s2);
 				}
@@ -88,7 +98,7 @@ public class Analysis {
 	}
     
 	private ArrayList<List> get20MostFrequentWords(){
-		PriorityQueue <String> sortedHeap = sortWords();
+		PriorityQueue <String> sortedHeap = sortWords("max");
 		return get20Words(sortedHeap,new ArrayList<String>());
 	}
 	
@@ -116,9 +126,13 @@ public class Analysis {
 	
 	private ArrayList<List> get20MostInterestingFrequentWords(String commonWords) {
 		List<String> commonList = new ArrayList<String>(Arrays.asList(commonWords.split(" ")));
-		PriorityQueue <String> sortedHeap = sortWords();
+		PriorityQueue <String> sortedHeap = sortWords("max");
 		return get20Words(sortedHeap,commonList);
+	}
 	
+	private ArrayList<List> get20LeastFrequentWords(){
+		PriorityQueue <String> sortedHeap = sortWords("min");
+		return get20Words(sortedHeap,new ArrayList<String>());
 	}
 	
 }
