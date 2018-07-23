@@ -1,10 +1,13 @@
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.BufferedReader;;
 
 public class Analysis {
 	private HashMap<String, Integer>  wordsMap = new HashMap<>();
+	private String[] byChapter;
 	public static void main (String[] args) throws IOException{
 		
 	    FileReader common = new FileReader("res/1-1000.txt");
@@ -48,6 +51,15 @@ public class Analysis {
 		
 		List leastList = get20LeastFrequentWords();
 		System.out.println(leastList);
+		
+		int[] wordCountByChapter = getFrequencyOfWord(novel,"see");
+		System.out.println(Arrays.toString(wordCountByChapter));
+		
+		int num = getChapterQuoteAppears("We were alone with the quiet day, and his little heart, dispossessed, had stopped.");
+		System.out.println(num);
+		
+		String sentence = generateSentence(novel);
+		
 		
 	}
 	
@@ -135,4 +147,79 @@ public class Analysis {
 		return get20Words(sortedHeap,new ArrayList<String>());
 	}
 	
+	private int[] getFrequencyOfWord(String novel, String target) {
+		byChapter = novel.split("Chapter[0-9]");
+		int[] res = new int[byChapter.length];
+		//chapter num, count
+		int currCount=0;
+		for (int i=0; i<byChapter.length; i++) {
+			currCount = 0;
+			Scanner scan = new Scanner(byChapter[i]);
+			while (scan.hasNext()) {
+				String word = scan.next();
+				word = word.replaceAll("\\p{Punct}", "");
+				if(word.equals(target)) {
+					currCount++;
+				}
+			}
+			res[i]=currCount;
+			
+		}
+		
+		return res;	
+	}
+	private int 	getChapterQuoteAppears(String quote) {
+		for (int i=0; i<byChapter.length; i++) {
+			if (byChapter[i].contains(quote)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	private String generateSentence(String novel) {
+		StringBuffer sentence = new StringBuffer();
+		int i=0;
+		String wordWithMaxFreq = "The";
+		sentence.append(wordWithMaxFreq);
+		while (i<20) {
+			String pattern = wordWithMaxFreq+"\\W+(\\w+)";
+			List<String> options = new ArrayList<String>();
+			Pattern curr = Pattern.compile(pattern);
+			Matcher matcher = curr.matcher(novel);
+			int maxFreq =0;
+			while(matcher.find()) {
+				String word = matcher.group(1);
+				if (wordsMap.containsKey(word) && maxFreq< wordsMap.get(word)) {
+					maxFreq = wordsMap.get(word);
+					wordWithMaxFreq = word; 
+				}
+			}
+			i++;
+			sentence.append(" "+wordWithMaxFreq);
+			System.out.println("maxFreq"+ wordWithMaxFreq +" "+maxFreq);
+		}
+		
+		System.out.println(sentence.toString());
+		return sentence.toString();
+		
+		
+		
+//		
+//		int index = novel.indexOf("The");
+//		while (index!=-1) {
+//			int end = novel.indexOf(" ", index+"The".length()+1);
+//			String word = novel.substring(index+4, end);
+//			options.add(word);
+//			index = novel.indexOf("The",index+1);
+//		}
+		
+//		System.out.println("The"+ options);
+//		System.out.println("maxFreq"+ wordWithMaxFreq +" "+maxFreq);
+//		
+//		
+//		return null;
+		
+	}
 }
