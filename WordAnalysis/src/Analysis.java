@@ -55,6 +55,7 @@ public class Analysis {
 		Scanner scan = new Scanner(novel);
 		while (scan.hasNext()) {
 			String word = scan.next();
+			word = word.replaceAll("\\p{Punct}", "");
 			word = word.toLowerCase();
 			if (wordsMap.containsKey(word)) {
 				int val = wordsMap.get(word);
