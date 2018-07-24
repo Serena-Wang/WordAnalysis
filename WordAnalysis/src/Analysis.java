@@ -1,3 +1,8 @@
+/**
+ * This class analyzes the novel: The Turn of the Screw
+ * @author Serena Wang
+ * 2018. July
+ */
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -9,7 +14,6 @@ public class Analysis {
 	private HashMap<String, Integer>  wordsMap = new HashMap<>();
 	private String[] byChapter;
 	public static void main (String[] args) throws IOException{
-		
 	    FileReader common = new FileReader("res/1-1000.txt");
 	    BufferedReader commonReader = new BufferedReader(common);
 	    String commonWords="";
@@ -59,15 +63,19 @@ public class Analysis {
 		System.out.println(num);
 		
 		String sentence = generateSentence(novel);
+		System.out.println(sentence);
+		
 		
 		
 	}
-	
+	// get the total number of words in the novel
 	private int getTotalNumerOfWords(String novel) {
 		return novel.split("\\s+").length;
 	}
 	
+	// get the total number of unique words in the novel
 	private int getTotalUniqueWords(String novel) {
+		// read word and put it in the hashmap
 		Scanner scan = new Scanner(novel);
 		while (scan.hasNext()) {
 			String word = scan.next();
@@ -84,6 +92,9 @@ public class Analysis {
 		
 		return wordsMap.size();
 	}
+	
+	//helper method for finding top 20 words
+	//With specified option String, it will return a max/min Heap
 	private PriorityQueue sortWords(String option) {
 		PriorityQueue <String> sortedHeap = new PriorityQueue<>(wordsMap.size(), new Comparator<String>() {
 			public int compare (String s1, String s2) {
@@ -109,11 +120,14 @@ public class Analysis {
 	
 	}
     
+	// get top 20 most frequently used words
 	private ArrayList<List> get20MostFrequentWords(){
 		PriorityQueue <String> sortedHeap = sortWords("max");
 		return get20Words(sortedHeap,new ArrayList<String>());
 	}
 	
+	// helper method to return a list of top 20 items in the heap and their number of occurrence 
+	// if there's no filter, filter can be an empty list
 	private ArrayList<List> get20Words(PriorityQueue <String> sortedHeap, List<String> filter){
 		
 		ArrayList<List> res = new ArrayList<List>();
@@ -135,22 +149,24 @@ public class Analysis {
 	}
 	
 	
-	
+	// get 20 most interesting words after the filter
+	// filter: top 100 most frequently used words
 	private ArrayList<List> get20MostInterestingFrequentWords(String commonWords) {
 		List<String> commonList = new ArrayList<String>(Arrays.asList(commonWords.split(" ")));
 		PriorityQueue <String> sortedHeap = sortWords("max");
 		return get20Words(sortedHeap,commonList);
 	}
 	
+	// get 20 least frequently used words
 	private ArrayList<List> get20LeastFrequentWords(){
 		PriorityQueue <String> sortedHeap = sortWords("min");
 		return get20Words(sortedHeap,new ArrayList<String>());
 	}
 	
+	// get the frequency of a specific word in each chapter
 	private int[] getFrequencyOfWord(String novel, String target) {
 		byChapter = novel.split("Chapter[0-9]");
 		int[] res = new int[byChapter.length];
-		//chapter num, count
 		int currCount=0;
 		for (int i=0; i<byChapter.length; i++) {
 			currCount = 0;
@@ -163,11 +179,12 @@ public class Analysis {
 				}
 			}
 			res[i]=currCount;
-			
 		}
-		
 		return res;	
 	}
+	
+	// find the chapter that the quote is from
+	// return -1 if cannot find the quote
 	private int 	getChapterQuoteAppears(String quote) {
 		for (int i=0; i<byChapter.length; i++) {
 			if (byChapter[i].contains(quote)) {
@@ -178,6 +195,10 @@ public class Analysis {
 		return -1;
 	}
 	
+	// generate a sentence with the words in the novel
+	// current algorithm: randomly picks the word that came after a word
+	// Code commented out uses the algorithm that picks the words with highest frequency in the novel. It does not perform very well in this novel due to a weird word loop.
+	// The sentence that I got from this algorithm is "The little of the him the him the him the him the him the him the him the him the."
 	private String generateSentence(String novel) {
 		StringBuffer sentence = new StringBuffer();
 		int i=0;
@@ -201,7 +222,6 @@ public class Analysis {
 			int random = (int) (Math.random()*options.size());
 			//sentence.append(" "+wordWithMaxFreq);
 			sentence.append(" "+options.get(random));
-			//System.out.println("maxFreq "+ wordWithMaxFreq +" "+maxFreq);
 		}
 		
 		System.out.println(sentence.toString());
