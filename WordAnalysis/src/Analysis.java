@@ -90,7 +90,7 @@ public class Analysis {
 				int countDiff=0;
 				if (option.equals("min")) {
 					countDiff = wordsMap.get(s1)-wordsMap.get(s2);
-				} else {
+				} else if (option.equals("max")){
 					countDiff = wordsMap.get(s2)-wordsMap.get(s1);
 				}
 				 
@@ -183,7 +183,7 @@ public class Analysis {
 		int i=0;
 		String wordWithMaxFreq = "The";
 		sentence.append(wordWithMaxFreq);
-		while (i<20) {
+		while (i<19) {
 			String pattern = wordWithMaxFreq+"\\W+(\\w+)";
 			List<String> options = new ArrayList<String>();
 			Pattern curr = Pattern.compile(pattern);
@@ -191,35 +191,20 @@ public class Analysis {
 			int maxFreq =0;
 			while(matcher.find()) {
 				String word = matcher.group(1);
-				if (wordsMap.containsKey(word) && maxFreq< wordsMap.get(word)) {
-					maxFreq = wordsMap.get(word);
-					wordWithMaxFreq = word; 
-				}
+//				if (wordsMap.containsKey(word) && maxFreq< wordsMap.get(word)) {
+//					maxFreq = wordsMap.get(word);
+//					wordWithMaxFreq = word; 
+//				}
+				options.add(word);
 			}
 			i++;
-			sentence.append(" "+wordWithMaxFreq);
-			System.out.println("maxFreq"+ wordWithMaxFreq +" "+maxFreq);
+			int random = (int) (Math.random()*options.size());
+			//sentence.append(" "+wordWithMaxFreq);
+			sentence.append(" "+options.get(random));
+			//System.out.println("maxFreq "+ wordWithMaxFreq +" "+maxFreq);
 		}
 		
 		System.out.println(sentence.toString());
 		return sentence.toString();
-		
-		
-		
-//		
-//		int index = novel.indexOf("The");
-//		while (index!=-1) {
-//			int end = novel.indexOf(" ", index+"The".length()+1);
-//			String word = novel.substring(index+4, end);
-//			options.add(word);
-//			index = novel.indexOf("The",index+1);
-//		}
-		
-//		System.out.println("The"+ options);
-//		System.out.println("maxFreq"+ wordWithMaxFreq +" "+maxFreq);
-//		
-//		
-//		return null;
-		
 	}
 }
